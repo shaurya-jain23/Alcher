@@ -486,9 +486,10 @@ user_id = parse_qs(parsed_url.query).get('user_id', None)[0]
 
 def passPage(request):
     # pass_instance = Pass.objects.get(id=pass_id)
+    email=request.session.get('LeaderEmail')
     emailID = request.session.get('emailId')
     doc_ref = db.collection('all_emails').document(emailID).get()
-    if doc_ref.exists:
+    if doc_ref.exists and doc_ref.to_dict()['email'] == email:
         # email = doc_ref.get().to_dict()['email']
         pass_id = request.session.get('pass_id')
         userPasses = []
