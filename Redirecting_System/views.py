@@ -66,9 +66,10 @@ def otp(request):
     print(url)
     parsed_url = urlparse(url)
     user_id = parse_qs(parsed_url.query).get('user_id', None)[0]
-    snapshots = db.collection('verified_user').document(user_id).get()
-    if snapshots.exists:
-        request.session['pass_id'] = user_id
+    # snapshots = db.collection('verified_user').document(user_id).get()
+    # print(snapshots.exists)
+    # if snapshots.exists:
+    request.session['pass_id'] = user_id
     return render(request, "Redirecting_System/otp.html")
 
 def Success(request):
@@ -130,7 +131,9 @@ def verify_otp(request):
         userPasses = []
         for user in verifiedUsers:
             data = user.to_dict()
-            userPasses.append(user.id)
+            userid = request.session.get('pass_id')
+            if userid == user.id:
+                userPasses.append(user.id)
         if len(userPasses) != 0:
             doc_ref = db.collection('all_emails').document()
             doc_ref.set({

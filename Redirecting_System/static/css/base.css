@@ -26,11 +26,21 @@
     padding: 0;
 }
 body{
-    /* background: url('../images/texture.png'); */
-    /* background-blend-mode: color-burn ; */
+   
     z-index: 200;
     box-sizing: border-box;
+    /* background: url('../images/texture.png');
+    mix-blend-mode: color-burn ; */
 }
+/* body::before{
+    position: absolute;
+    content: "";
+    min-height: 100%;
+    width: 100vw;
+    background-repeat: repeat;
+    background-position: center;
+   
+} */
 .dots {
     display: inline-block;
     width: 60px;
