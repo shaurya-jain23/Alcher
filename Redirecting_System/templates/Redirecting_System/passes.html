@@ -12,15 +12,15 @@
     <div id="passPortalContent">
         <div class="headtxt">
             <img src="{% static 'images/Vector2.png' %}">
-            <h2 class="head">YOU ARE VERIFIED AS A ALCHER PASS HOLDER</h2>
+            <h2 class="head">YOU ARE VERIFIED AS A ALCHER CARD HOLDER</h2>
         </div>
-        <p class="belowtxt">Your summary here for the Alcheringa 2024 passes</p>
+        <p class="belowtxt">Your summary here for the Alcheringa 2024 cards</p>
     </div>
 
     <div class="pass">
         <div class="passtxt">
             <h2 class="passhead">ATTENDEES</h2>
-            <p class="belowtxt">Pass-holders and their type of passes</p>
+            <p class="belowtxt">Card-holders and their type of cards</p>
         </div>
 
         {% for pass in passes %}
@@ -38,7 +38,7 @@
 
     <div class="reg">
         <button class="btn">
-            <a href="{% url 'home' %}" style="text-decoration: none; color:black;">BUY MORE PASSES HERE &rarr;</a>
+            <a href="{% url 'home' %}" style="text-decoration: none; color:black;">BUY MORE CARDS HERE &rarr;</a>
         </button>
     </div>
 </div>
