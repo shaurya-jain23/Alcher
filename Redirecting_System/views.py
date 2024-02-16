@@ -99,8 +99,12 @@ def sendOtp(request):
 
 def success(request):
     return render(request, "Redirecting_System/success.html")
+
+
 def failure(request):
     return render(request, "Redirecting_System/failure.html")
+
+
 def verify_otp(request):
     # Get the list of OTP values from the POST data
     otp_values = request.POST.getlist('otp')
@@ -121,14 +125,21 @@ def verify_otp(request):
     email = request.session.get('LeaderEmail')
     print(OTP, otp1)
     if OTP == otp1:
-        
         verifiedUsers = db.collection('verified_user').where('email', '==', email).stream()
         userPasses = []
         for user in verifiedUsers:
             data = user.to_dict()
             userPasses.append(user.id)
-
-        return redirect('passes')
+        if len(userPasses) != 0:
+            doc_ref = db.collection('all_emails').document()
+            doc_ref.set({
+                'id': doc_ref.id,
+                'email': email,
+            })
+            request.session['emailId'] = doc_ref.id
+            return redirect('passes')
+        else:
+            return redirect('failure')
     
     context = {
         'message': "Incorrect OTP",
@@ -380,7 +391,6 @@ def generate_jpg_for_transaction(transaction_data):
             elif pass_type == 'NORMAL':
                 aztec_img = aztec.make_image(fill_color="white", back_color="#F28E15")
                 qr_code_path = f'aztec_code_{user["user_id"]}.png'
-                   
                 aztec_img.save(qr_code_path)
                 aztec_img = aztec_img.resize((365, 365))  # Resize the QR code to be larger
                 img.paste(aztec_img, (img.width - 950, img.height - 665))  # Paste the QR code onto the image
@@ -403,12 +413,12 @@ def generate_jpg_for_transaction(transaction_data):
         
         # Add user_id to the image
         draw = ImageDraw.Draw(img)
-        font = ImageFont.truetype(local_filename, 27)  # Choose your font and size
-        draw.text((1320, 700), user['user_id'], fill="black",font=font)  # Choose position (x, y) and color
+        font = ImageFont.truetype(local_filename, 35)  # Choose your font and size
+        draw.text((1410, 700), user['user_id'], fill="black",font=font)  # Choose position (x, y) and color
         # Add vertical user_id to the image
         text_img = Image.new('RGB', (320, 50), color = (255, 255, 255))  # Create a new image to draw the vertical text
         text_draw = ImageDraw.Draw(text_img)
-        text_font = ImageFont.truetype(local_filename, 24)  # Choose your font and size
+        text_font = ImageFont.truetype(local_filename, 32)  # Choose your font and size
         text_draw.text((10, 10), user['user_id'], fill="black", font=text_font)  # Draw the text on the new image
         rotated_text_img = text_img.rotate(90, expand=1)  # Rotate the image with the text
 
@@ -463,7 +473,7 @@ def passes(request):
 
 from urllib.parse import urlparse, parse_qs
 
-url = "http://localhost:8000/otp/?user_id=jasdlkfjasdkjffd"
+url = "http://localhost:8000/otp/?user_id=M45K1rhDMgMLN1kCPTEO"
 
 # Parse the URL
 parsed_url = urlparse(url)
@@ -475,34 +485,36 @@ user_id = parse_qs(parsed_url.query).get('user_id', None)[0]
 
 def passPage(request):
     # pass_instance = Pass.objects.get(id=pass_id)
-    pass_id = request.session.get('pass_id')
-    email = request.session.get('LeaderEmail')
-    userPasses = []
-    if email is None:
+    emailID = request.session.get('emailId')
+    doc_ref = db.collection('all_emails').document(emailID).get()
+    if doc_ref.exists:
+        # email = doc_ref.get().to_dict()['email']
+        pass_id = request.session.get('pass_id')
+        userPasses = []
+        doc_ref = db.collection('verified_user').document(pass_id)
+        user = doc_ref.get()
+        if user.exists:
+            y = user.to_dict()
+            if 'isPassGenerated' in y:
+                file_path = f'imgs/{pass_id}.jpg'  # Adjust the path based on your actual structure
+                file_url = settings.MEDIA_URL + file_path
+                userPasses.append(file_url)
+            else:
+                passes_info = []
+                img_storage = default_storage
+                passes_info.append({
+                    'user_id': pass_id,
+                    'pass_type': y['pass_type']
+                })
+                jpg_bytes_list = generate_jpg_for_transaction(passes_info)
+                for i, jpg_bytes in enumerate(jpg_bytes_list):
+                    file_path = img_storage.save(f'imgs/{pass_id}.jpg', ContentFile(jpg_bytes))
+                doc_ref.update({"isPassGenerated": True})
+                file_path = f'imgs/{pass_id}.jpg'  # Adjust the path based on your actual structure
+                file_url = settings.MEDIA_URL + file_path
+                userPasses.append(file_url)
+    else:
         return redirect(failure)
-    doc_ref = db.collection('verified_user').document(pass_id)
-    user = doc_ref.get()
-    if user.exists:
-        y = user.to_dict()
-        if 'isPassGenerated' in y:
-            file_path = f'imgs/{pass_id}.jpg'  # Adjust the path based on your actual structure
-            file_url = settings.MEDIA_URL + file_path
-            userPasses.append(file_url)
-        else:
-            passes_info = []
-            img_storage = default_storage
-            passes_info.append({
-                'user_id': pass_id,
-                'pass_type': y['pass_type']
-            })
-            jpg_bytes_list = generate_jpg_for_transaction(passes_info)
-            for i, jpg_bytes in enumerate(jpg_bytes_list):
-                file_path = img_storage.save(f'media/imgs/{pass_id}.jpg', ContentFile(jpg_bytes))
-            y['isPassGenerated'] = True
-            file_path = f'imgs/{pass_id}.jpg'  # Adjust the path based on your actual structure
-            file_url = settings.MEDIA_URL + file_path
-            userPasses.append(file_url)
-            
     # verifiedUsers = db.collection('verified_user').where('email', '==', email).stream()
     # 
     # for user in verifiedUsers:
