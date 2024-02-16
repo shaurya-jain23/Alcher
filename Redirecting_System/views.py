@@ -137,14 +137,16 @@ def download_file(url):
     f.write(r.content)
     f.close()
     return base_dir
-def unique_id(length):
+def generate_random_id():
     iv = (db.collection('verified_user').stream())
     document_ids = [doc.id for doc in iv]
     while True:
-        random_string = ''.join(random.choices(string.ascii_letters + string.digits, k=length))
-        if random_string not in document_ids:
-            print(random_string)
-            return random_string
+        random_number = random.randint(0, 4500)
+        random_number_str = str(random_number).zfill(4)
+        id = f'NSP{random_number_str}'
+        if id not in document_ids:
+            print(id)
+            return id 
 def automation(request):
     dir = download_file('https://dev.bharatversity.com/events/website/api/event-amount-overview-excel-sheet-api/550b0b35-5bd1-47c0-88b2-8a952dd08e08')
     index=db.collection('index').document('rcT6Wb8kyh07erua4VaM').get().to_dict()['index']
