@@ -66,8 +66,9 @@ def otp(request):
     print(url)
     parsed_url = urlparse(url)
     user_id = parse_qs(parsed_url.query).get('user_id', None)[0]
-    print(user_id)
-    request.session['pass_id'] = user_id
+    snapshots = db.collection('verified_user').document(user_id).get()
+    if snapshots.exists:
+        request.session['pass_id'] = user_id
     return render(request, "Redirecting_System/otp.html")
 
 def Success(request):
