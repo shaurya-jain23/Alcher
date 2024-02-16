@@ -62,6 +62,12 @@ def home(request):
     
 
 def otp(request):
+    url = request.build_absolute_uri()
+    print(url)
+    parsed_url = urlparse(url)
+    user_id = parse_qs(parsed_url.query).get('user_id', None)[0]
+    print(user_id)
+    request.session['pass_id'] = user_id
     return render(request, "Redirecting_System/otp.html")
 
 def Success(request):
@@ -115,6 +121,7 @@ def verify_otp(request):
     email = request.session.get('LeaderEmail')
     print(OTP, otp1)
     if OTP == otp1:
+        
         verifiedUsers = db.collection('verified_user').where('email', '==', email).stream()
         userPasses = []
         for user in verifiedUsers:
@@ -264,6 +271,8 @@ def verifyid(request):
     except Exception as e:
         print(e)
         return Response({'error': 'An error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+
 def send_email_with_pdf(request):
     from_email = settings.EMAIL_HOST_USER
     email = EmailMessage(
@@ -450,7 +459,7 @@ def passes(request):
     except Exception as e:
         print(e)
         return HttpResponse("An error occurred.")
-passes(3)
+# passes(3)
 
 from urllib.parse import urlparse, parse_qs
 
@@ -460,23 +469,45 @@ url = "http://localhost:8000/otp/?user_id=jasdlkfjasdkjffd"
 parsed_url = urlparse(url)
 
 # Extract the user_id parameter value
-user_id = parse_qs(parsed_url.query).get('user_id', [None])[0]
+user_id = parse_qs(parsed_url.query).get('user_id', None)[0]
+
+
+
 def passPage(request):
     # pass_instance = Pass.objects.get(id=pass_id)
-    parsed_url = urlparse(url)
-    user_id = parse_qs(parsed_url.query).get('user_id', [None])[0]
+    pass_id = request.session.get('pass_id')
     email = request.session.get('LeaderEmail')
+    userPasses = []
     if email is None:
         return redirect(failure)
-    # user = db.collection('verified_user').document(user_id)
-    # if user.exist:
-    #     if email==user['email']:
+    doc_ref = db.collection('verified_user').document(pass_id)
+    user = doc_ref.get()
+    if user.exists:
+        y = user.to_dict()
+        if 'isPassGenerated' in y:
+            file_path = f'imgs/{pass_id}.jpg'  # Adjust the path based on your actual structure
+            file_url = settings.MEDIA_URL + file_path
+            userPasses.append(file_url)
+        else:
+            passes_info = []
+            img_storage = default_storage
+            passes_info.append({
+                'user_id': pass_id,
+                'pass_type': y['pass_type']
+            })
+            jpg_bytes_list = generate_jpg_for_transaction(passes_info)
+            for i, jpg_bytes in enumerate(jpg_bytes_list):
+                file_path = img_storage.save(f'media/imgs/{pass_id}.jpg', ContentFile(jpg_bytes))
+            y['isPassGenerated'] = True
+            file_path = f'imgs/{pass_id}.jpg'  # Adjust the path based on your actual structure
+            file_url = settings.MEDIA_URL + file_path
+            userPasses.append(file_url)
             
-    verifiedUsers = db.collection('verified_user').where('email', '==', email).stream()
-    userPasses = []
-    for user in verifiedUsers:
-        data = user.to_dict()
-        file_path = f'imgs/{user.id}.jpg'  # Adjust the path based on your actual structure
-        file_url = settings.MEDIA_URL + file_path
-        userPasses.append(file_url)
+    # verifiedUsers = db.collection('verified_user').where('email', '==', email).stream()
+    # 
+    # for user in verifiedUsers:
+    #     data = user.to_dict()
+    #     file_path = f'imgs/{user.id}.jpg'  # Adjust the path based on your actual structure
+    #     file_url = settings.MEDIA_URL + file_path
+    #     userPasses.append(file_url)
     return render(request,"Redirecting_System/passes.html", {'passes': userPasses})

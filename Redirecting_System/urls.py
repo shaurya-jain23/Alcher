@@ -3,7 +3,9 @@ from django.urls import path
 
 from . import views
 urlpatterns = [
-    path('', views.otp , name="otp"),
+    path('', views.home, name ="home"),
+    path('api/data/', views.get_data, name='get_data'),
+    path('otp/', views.otp , name="otp"),
     path('verify/', views.sendOtp, name='send_otp'),
     path('submit/', views.verify_otp, name='verify_otp'),
     path('api/', views.user_data, name='user_data'),
