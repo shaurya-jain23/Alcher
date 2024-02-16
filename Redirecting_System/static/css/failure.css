@@ -1,0 +1,28 @@
+.redline{
+    font-family: 'Uncut-Sans';
+    color: #DB5356;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 2vw;
+    position: relative;
+}
+.failure-image{
+    padding-right: 0.5vw;
+    width: 2vw;
+}
+.submitbtn {
+    margin-left: 5vw;
+    background-color: #2DA38F;
+    font-size: 2.4vw;
+    padding: 0.2vw 1.2vw;
+    color: #181818;
+    border: none;
+    border-radius: 0.2rem;
+    margin-top: 4rem;
+}
+.container{
+    margin: 4vw 0;
+}
+.line{
+    margin-bottom: 1rem;
+}

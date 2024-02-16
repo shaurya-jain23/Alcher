@@ -91,7 +91,10 @@ def sendOtp(request):
         print(e)
     return JsonResponse({"otp": otp})
 
-
+def success(request):
+    return render(request, "Redirecting_System/success.html")
+def failure(request):
+    return render(request, "Redirecting_System/failure.html")
 def verify_otp(request):
     # Get the list of OTP values from the POST data
     otp_values = request.POST.getlist('otp')
@@ -461,7 +464,8 @@ def passPage(request):
     parsed_url = urlparse(url)
     user_id = parse_qs(parsed_url.query).get('user_id', [None])[0]
     email = request.session.get('LeaderEmail')
-    
+    if email is None:
+        return redirect(failure)
     # user = db.collection('verified_user').document(user_id)
     # if user.exist:
     #     if email==user['email']:

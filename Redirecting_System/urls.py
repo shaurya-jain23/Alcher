@@ -10,4 +10,6 @@ urlpatterns = [
     path('api-verifyid/', views.verifyid, name='verifyid'),
     path('send_email/',views.send_email_with_pdf,name="send_email"),
     path('passes/',views.passPage,name="passes"),
+    path('success/',views.success,name="success"),
+    path('failure/',views.failure,name="failure"),
 ]

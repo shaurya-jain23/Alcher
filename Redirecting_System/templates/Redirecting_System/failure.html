@@ -1,0 +1,31 @@
+{% extends "Redirecting_System/base.html" %}
+{% load static %}
+{% block title %}
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static "css/failure.css" %}">
+    <link rel="stylesheet" href="{% static "register/register.css" %}">
+{% endblock title %}
+
+{% block page %}
+<div class="container"style="display: flex;flex-direction: column;justify-content: center;">
+<div class="line" style="display: flex;justify-content: center;">
+<img src="{% static "images/Vector2.svg" %}" alt="failure" class="failure-image" />
+<div class="redline" style="font-family: 'Uncut-Sans'">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorem, illum?</div>
+</div>
+<div style="display: flex;justify-content: center;">
+    <div style="font-family: 'Uncut-Sans';color: white;font-size: 1.5vw;">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorem, illum?</div>
+</div>
+<div style="display: flex;justify-content: center;">
+    <button type="submit" class="submitbtn bigf" style="background-color: yellow;">BUY YOUR PASSES HERE</button>
+</div>
+</div>
+
+{% endblock page %}
+{%block script%}
+<script>
+    window.addEventListener('DOMContentLoaded', ()=>{
+        let loader = document.querySelector('#preLoader');
+        loader.style.display = 'none';
+    })
+</script>
+{%endblock script%}
