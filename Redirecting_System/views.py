@@ -6,6 +6,7 @@ from django.core.mail import send_mail
 from django.views.decorators.csrf import csrf_exempt
 import firebase_admin
 from firebase_admin import credentials, firestore
+from django.contrib import messages
 import pandas as pd
 from django.core.mail import EmailMessage
 from django.core.mail import send_mail
@@ -41,22 +42,21 @@ db = firestore.client(app=get_firebase_app('alcher-redirecting-system'))
 
 
 def get_data(request):
-    data1 = {
-        'DAY 1': db.collection('Data').document('Day-1').get().to_dict(),
-        'DAY 2': db.collection('Data').document('Day-2').get().to_dict(),
-        'DAY 3': db.collection('Data').document('Day-3').get().to_dict(),
-    }
+    # data1 = {
+    #     'DAY 1': db.collection('Data').document('Day-1').get().to_dict(),
+    #     'DAY 2': db.collection('Data').document('Day-2').get().to_dict(),
+    #     'DAY 3': db.collection('Data').document('Day-3').get().to_dict(),
+    # }
     data2 = {
-        'EARLY BIRD SEASON PASS': db.collection('Data').document('EARLY BIRD SEASON PASS').get().to_dict(),
+        # 'EARLY BIRD SEASON PASS': db.collection('Data').document('EARLY BIRD SEASON PASS').get().to_dict(),
         'NORMAL SEASON PASS': db.collection('Data').document('NORMAL SEASON PASS').get().to_dict(),
     }
-    request.session['dayWisePasses'] = data1
+    # request.session['dayWisePasses'] = data1
     request.session['seasonPasses'] = data2
     return JsonResponse(data2)
 
 def home(request):
     dayWisePasses = request.session.get('dayWisePasses', {})
-    print(dayWisePasses)
     seasonPasses = request.session.get('seasonPasses', {})
     return render(request, "Redirecting_System/home.html",{'dayWisePasses': dayWisePasses,'seasonPasses':seasonPasses})
     
@@ -77,6 +77,7 @@ def Success(request):
 
 @csrf_exempt
 def sendOtp(request):
+    print(request.body, "sendOtp")
     try:
         email = json.loads(request.body)['email']
         request.session['LeaderEmail'] = email
@@ -108,48 +109,53 @@ def failure(request):
 
 
 def verify_otp(request):
-    # Get the list of OTP values from the POST data
-    otp_values = request.POST.getlist('otp')
-    # Combine the OTP values into a single string
-    otp = ''.join(otp_values)
+    try:
+        print(request.body, "verify")
+        # Get the list of OTP values from the POST data
+        # otp_values = request.POST.getlist('otp')
+        # Combine the OTP values into a single string
+        # otp = ''.join(otp_values)
+        otp = json.loads(request.body)['otp']
+        otpID = request.session.get('OTPId')
+        snapshots = db.collection('all_otps').where('id', '==', otpID).stream() #
+        users = []
+        otp1 = 0
+        for user in snapshots:
+            formattedData = user.to_dict()
+            otp1 = formattedData['otp']
+            users.append(user.reference)
 
-    otpID = request.session.get('OTPId')
-    snapshots = db.collection('all_otps').where('id', '==', otpID).stream() #
-    users = []
-    otp1 = 0
-    for user in snapshots:
-        formattedData = user.to_dict()
-        print(formattedData)
-        otp1 = formattedData['otp']
-        users.append(user.reference)
-
-    OTP = int(otp)
-    email = request.session.get('LeaderEmail')
-    print(OTP, otp1)
-    if OTP == otp1:
-        verifiedUsers = db.collection('verified_user').where('email', '==', email).stream()
-        userPasses = []
-        for user in verifiedUsers:
-            data = user.to_dict()
-            userid = request.session.get('pass_id')
-            if userid == user.id:
-                userPasses.append(user.id)
-        if len(userPasses) != 0:
-            doc_ref = db.collection('all_emails').document()
-            doc_ref.set({
-                'id': doc_ref.id,
-                'email': email,
-            })
-            request.session['emailId'] = doc_ref.id
-            return redirect('passes')
-        else:
-            return redirect('failure')
-    
-    context = {
-        'message': "Incorrect OTP",
-        'email': email
-    }
-    return render(request, 'Redirecting_System/otp.html', context)
+        OTP = int(otp)
+        email = request.session.get('LeaderEmail')
+        # print(OTP, otp1)
+        if OTP == otp1:
+            verifiedUsers = db.collection('verified_user').where('email', '==', email).stream()
+            userPasses = []
+            for user in verifiedUsers:
+                data = user.to_dict()
+                userid = request.session.get('pass_id')
+                if userid == user.id:
+                    userPasses.append(user.id)
+            if len(userPasses) != 0:
+                doc_ref = db.collection('all_emails').document()
+                doc_ref.set({
+                    'id': doc_ref.id,
+                    'email': email,
+                })
+                request.session['emailId'] = doc_ref.id
+                return redirect('passes')
+            else:
+                return redirect('failure')
+        
+        context = {
+            'message': "Incorrect OTP",
+            'email': email
+        }
+        # return render(request, 'Redirecting_System/otp.html', context)
+        messages.error(request,  'Incorrect OTP')
+    except Exception as e:
+        print(e)
+    return JsonResponse({"otp": otp})
 
 def download_file(url):
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)+"../Redirecting_System"))

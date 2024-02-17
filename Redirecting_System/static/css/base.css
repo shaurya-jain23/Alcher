@@ -29,8 +29,8 @@ body{
    
     z-index: 200;
     box-sizing: border-box;
-    /* background: url('../images/texture.png');
-    mix-blend-mode: color-burn ; */
+    background: url('../images/texture.png');
+    background-blend-mode: color-burn ;
 }
 /* body::before{
     position: absolute;
@@ -100,7 +100,7 @@ body{
 }
 h1 {
     margin: 0 1vw;
-    font-size: x-large;
+    font-size: 2vw;
     font-family: 'fsp-demo-freigeist-con-black-5';
 }
 .navContainer {
@@ -109,12 +109,11 @@ h1 {
     z-index: 9;
 }
 #alcherlogo1 {
-    height: 2.3rem;
+    height: 2.3vw;
     width: max-content;
 
 }
 .navbar {
-
     background-color: #E1E1E11A;
     color: #f4f4f4;
     display: flex;
@@ -378,10 +377,10 @@ input[type=number] {
 
 @media (max-width:650px) {
     h1 {
-        font-size: 1.4rem;
+        font-size: 3vw;
     }
     #alcherlogo1 {
-        height: 2rem;
+        height: 4vw;
     }
     .follow-us {
         font-size: 2.3vw;

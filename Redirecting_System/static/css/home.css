@@ -19,13 +19,7 @@ body{
     overflow-x: hidden;
 }
 .navbar{
-    background-color: #1E1E1EB2;
-    color: #f4f4f4;
-    display: flex;
-    padding: 0.5rem 2rem;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.9vw;
+    background-color: #1E1E1EB2 !important;
 }
 .heroSection{
     background-color: #F4F4F4;
@@ -38,6 +32,17 @@ body{
     width: 100vw;
     height: 65vw;
     position: relative;
+}
+.heroSection::before{
+    position: absolute;
+    content: "";
+    min-height: 100%;
+    width: 100vw;
+    background: url('../images/texture.png');
+    mix-blend-mode: color-burn ;
+    background-repeat: repeat;
+    background-position: center;
+   
 }
 .heroSection h1{
     font-family: 'fsp-demo-freigeist-con-black-5';
@@ -251,6 +256,17 @@ body{
     position: relative;
     color: white;
 }
+.earlybird::before{
+    position: absolute;
+    content: "";
+    min-height: 100%;
+    width: 100vw;
+    background: url('../images/texture.png');
+    mix-blend-mode: color-burn ;
+    background-repeat: repeat;
+    background-position: center;
+   
+}
 .dayPassContainer{
     display: flex;
     flex-wrap: wrap;
@@ -346,7 +362,7 @@ body{
         font-size: 7vw;
     }
     .heroSection h1{
-        top: 15vw;
+        top: 10vw;
     }
     .allSeason b{
         font-size: 6vw;
@@ -368,8 +384,10 @@ body{
         margin-bottom:8vw;
     }
     #seasonDate{
+      padding-left: 10px;
       font-size: 3vw;
       width:60%;
+      justify-content: flex-start;
     }
     #seasonPrice{
         font-size: 3vw;
@@ -391,7 +409,7 @@ body{
         margin-right: 3vw;
      }
     .btndiv {
-       margin-right: 10vw;
+       margin-right: 5vw;
     }
     
     .dayPassContainer{

@@ -35,24 +35,24 @@
                 </div>
                 <button id="otpSend" class="button">SENT OTP</button>
             </div>
-            <form action="{% url 'verify_otp' %}" method="POST" class="otpform">
-                {% csrf_token %}
-                <div id="otpInput">
-                    <h2>OTP</h2>
-                    <div class="alerts">
-                        <h3 id="alt_wrongOtp"><img src="{% static 'svg/icon.svg' %}"> &nbsp; {{message}}</h3>
-                    </div>
-                    <div id="otpVerify">
-                        <input type="number" class="dash" min="0" max="9" maxlength="1" required name = "otp">
-                        <input type="number" class="dash" min="0" max="9" maxlength="1" required name = "otp">
-                        <input type="number" class="dash" min="0" max="9" maxlength="1" required name = "otp">
-                        <input type="number" class="dash" min="0" max="9" maxlength="1" required name = "otp">
-                        <input type="number" class="dash" min="0" max="9" maxlength="1" required name = "otp">
-                        <input type="number" class="dash" min="0" max="9" maxlength="1" required name = "otp">
-                    </div>
-                    <button type="submit" id="submitOtp" class="button" style="padding-right: 10px;" disabled>PROCEED &nbsp; <img style="height: 2.5vw; width: 2.5vw;" src="{% static 'svg/arrow.svg' %}"> </button>
+            <!-- <form action="{% url 'verify_otp' %}" method="POST" class="otpform"> -->
+                <!-- {% csrf_token %} -->
+            <div id="otpInput">
+                <h2>OTP</h2>
+                <div class="alerts">
+                    <h3 id="alt_wrongOtp"><img src="{% static 'svg/icon.svg' %}"> &nbsp; {{message}}</h3>
                 </div>
-            </form>
+                <div id="otpVerify">
+                    <input type="number" class="dash" min="0" max="9" maxlength="1" required name = "otp">
+                    <input type="number" class="dash" min="0" max="9" maxlength="1" required name = "otp">
+                    <input type="number" class="dash" min="0" max="9" maxlength="1" required name = "otp">
+                    <input type="number" class="dash" min="0" max="9" maxlength="1" required name = "otp">
+                    <input type="number" class="dash" min="0" max="9" maxlength="1" required name = "otp">
+                    <input type="number" class="dash" min="0" max="9" maxlength="1" required name = "otp">
+                </div>
+                <button type="submit" id="submitOtp" class="button" style="padding-right: 10px;" disabled>PROCEED &nbsp; <img style="height: 2.5vw; width: 2.5vw;" src="{% static 'svg/arrow.svg' %}"> </button>
+            </div>
+            <!-- </form> -->
             
         </div>
     </div>
@@ -202,28 +202,44 @@
         codes[0].focus()
     }
 
-    // document.querySelector('#submitOtp').addEventListener('click', submitOtp)
+    document.querySelector('#submitOtp').addEventListener('click', submitOtp)
 
     function submitOtp(e) {
-        e.preventDefault();
+    // e.preventDefault();
         // Get the OTP input values
         var otpValues = document.getElementsByName("otp");
-        var otp = "";
+        var otp1 = "";
         for (var i = 0; i < otpValues.length; i++) {
-            otp += otpValues[i].value;
+            otp1 += otpValues[i].value;
         }
+        console.log(otp1);
+        fetch("{% url 'verify_otp' %}",{
+                method: "POST", 
+                body: JSON.stringify({
+                    otp: otp1
+                }),
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8"
+                }
+            })
+        .catch((e)=>{console.log(e)})
+        {% for message in messages %}
+            {% if message.tags == 'error' %}
+                document.querySelector('#alt_wrongOtp').innerHTML = '{{message}}'
+            {% endif %}
+        {% endfor %}
 
         // Perform client-side validation
-        var otp1 = parseInt('{{ otp1 }}');  // Pass the correct OTP value from the server
-        var OTP = parseInt(otp);
+        // var otp1 = parseInt('{{ otp1 }}');  // Pass the correct OTP value from the server
+        // var OTP = parseInt(otp);
 
-        if (OTP === otp1) {
-            // Correct OTP, proceed with the form submission
-            document.getElementById("otpForm").submit();
-        } else {
-            // Incorrect OTP, show an alert
-            document.getElementById("alt_wrongOtp").innerHTML = '<img src="{% static "svg/icon.svg" %}">&nbsp; Incorrect OTP. Please try again.';
-        }
+        // if (OTP === otp1) {
+        //     // Correct OTP, proceed with the form submission
+        //     document.getElementById("otpForm").submit();
+        // } else {
+        //     // Incorrect OTP, show an alert
+        //     document.getElementById("alt_wrongOtp").innerHTML = '<img src="{% static "svg/icon.svg" %}">&nbsp; Incorrect OTP. Please try again.';
+        // }
     }
  </script>  
 {% endblock script %}

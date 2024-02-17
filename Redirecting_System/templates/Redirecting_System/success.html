@@ -1,21 +1,25 @@
-{% extends "main/base.html" %}
+{% extends "Redirecting_System/base.html" %}
 {% load static %}
 {% block title %}
-    <title>Document</title>
-    <link rel="stylesheet" href="{% static "register/register.css" %}">
+    <title>Success | Alcheringa</title>
+    <link rel="stylesheet" href="{% static 'register/register.css' %}">
+    <link rel="stylesheet" href="{% static 'css/success.css' %}">
 {% endblock title %}
 
 {% block page %}
-<div style="display: flex;flex-direction: column;justify-content: center;height: 40vh;">
-<div style="display: flex;justify-content: center;">
-<div style="font-family: 'Uncut-Sans';color: green;font-size: 2vw;">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorem, illum?</div>
-</div>
-<div style="display: flex;justify-content: center;">
-    <div style="font-family: 'Uncut-Sans';color: white;font-size: 1.5vw;">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorem, illum?</div>
-</div>
-<div style="display: flex;justify-content: center;">
-    <button type="submit" class="submitbtn bigf" style="background-color: yellow;">BUY YOUR CARDS HERE</button>
-</div>
+<div class="container">
+    <div class="line" style="display: flex;justify-content: center;">
+        <img src="{% static 'images/Vector1.png' %}" alt="Success" class="failure-image" />
+        <div class="redline" style="font-family: 'Uncut-Sans'">Success, Thank you for your payment!
+        </div>
+    </div>
+    <div class="abc" style="display: flex;justify-content: center;">
+        <div class="msg">
+            Your transaction was successful! You will recieve your cards on your email.</div>
+    </div>
+    <div style="display: flex;justify-content: center;">
+        <button type="submit" class="submitbtn bigf" style="background-color: yellow;"><a style="text-decoration: none; color: black;" href="{% url 'home' %}">GET MORE CARDS HERE</a></button>
+    </div>
 </div>
 
 {% endblock page %}
