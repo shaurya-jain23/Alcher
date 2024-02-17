@@ -167,7 +167,6 @@ h3 {
 }
 
 .name {
-    margin-left: 5vw;
     width: 32vw;
 }
 
@@ -682,7 +681,6 @@ input[type=number] {
 
     .phone {
         font-size: 1.5vw;
-        margin-top: 1vw;
     }
 
     .emaile {

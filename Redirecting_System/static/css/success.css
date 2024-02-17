@@ -1,3 +1,6 @@
+body{
+    overflow-x: hidden;
+}
 .redline{
     font-family: 'Uncut-Sans';
     color: #2DA38F;

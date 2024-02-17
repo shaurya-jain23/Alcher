@@ -164,49 +164,6 @@ def verify_otp(request):
     except Exception as e:
         print(e)
     return JsonResponse(context)
-    # # Get the list of OTP values from the POST data
-    # otp_values = request.POST.getlist('otp')
-    # # Combine the OTP values into a single string
-    # otp = ''.join(otp_values)
-
-    # otpID = request.session.get('OTPId')
-    # snapshots = db.collection('all_otps').where('id', '==', otpID).stream() #
-    # users = []
-    # otp1 = 0
-    # for user in snapshots:
-    #     formattedData = user.to_dict()
-    #     print(formattedData)
-    #     otp1 = formattedData['otp']
-    #     users.append(user.reference)
-
-    # OTP = int(otp)
-    # email = request.session.get('LeaderEmail')
-    # print(OTP, otp1)
-    # if OTP == otp1:
-    #     verifiedUsers = db.collection('verified_user').where('email', '==', email).stream()
-    #     userPasses = []
-    #     for user in verifiedUsers:
-    #         data = user.to_dict()
-    #         userid = request.session.get('pass_id')
-    #         if userid == user.id:
-    #             userPasses.append(user.id)
-    #     if len(userPasses) != 0:
-    #         doc_ref = db.collection('all_emails').document()
-    #         doc_ref.set({
-    #             'id': doc_ref.id,
-    #             'email': email,
-    #         })
-    #         request.session['emailId'] = doc_ref.id
-    #         return redirect('passes')
-    #     else:
-    #         message="Card or User is not valid"
-    #         return render(request, "Redirecting_System/failure.html", {"message":message})
-    
-    # context = {
-    #     'message': "Incorrect OTP",
-    #     'email': email
-    # }
-    # return render(request, 'Redirecting_System/otp.html', context)
 
 def download_file(url):
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)+"../Redirecting_System"))
@@ -438,6 +395,7 @@ def passPage(request):
                 file_path = f'imgs/{pass_id}.jpg'  # Adjust the path based on your actual structure
                 file_url = settings.MEDIA_URL + file_path
                 userPasses.append(file_url)
+                print(file_url)
             else:
                 passes_info = []
                 img_storage = default_storage
@@ -451,9 +409,10 @@ def passPage(request):
                 doc_ref.update({"isPassGenerated": True})
                 file_path = f'imgs/{pass_id}.jpg'  # Adjust the path based on your actual structure
                 file_url = settings.MEDIA_URL + file_path
+                print(file_url)
                 userPasses.append(file_url)
     else:
-        message="Card Not found"
+        message="Card Not Found"
         return render(request, "Redirecting_System/failure.html", {"message":message})
     # verifiedUsers = db.collection('verified_user').where('email', '==', email).stream()
     # 
@@ -469,7 +428,7 @@ def passPage(request):
 def automation(request):
     # dir = download_file('https://dev.bharatversity.com/events/website/api/event-amount-overview-excel-sheet-api/550b0b35-5bd1-47c0-88b2-8a952dd08e08')
     index=db.collection('index').document('rcT6Wb8kyh07erua4VaM').get().to_dict()['index']
-    data=pd.read_excel('/Users/shivamg/Downloads/book.xlsx')
+    data=pd.read_excel('/Users/shaurya/Downloads/book.xlsx')
     print(data['PAYMENT_STATUS'][0])
     pendinguser=db.collection('pending_user').stream()
     pend=[]
