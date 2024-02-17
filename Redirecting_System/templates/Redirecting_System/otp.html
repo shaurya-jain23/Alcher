@@ -40,7 +40,7 @@
             <div id="otpInput">
                 <h2>OTP</h2>
                 <div class="alerts">
-                    <h3 id="alt_wrongOtp"><img src="{% static 'svg/icon.svg' %}"> &nbsp; {{message}}</h3>
+                    <h3 id="alt_wrongOtp"></h3>
                 </div>
                 <div id="otpVerify">
                     <input type="number" class="dash" min="0" max="9" maxlength="1" required name = "otp">
@@ -176,7 +176,11 @@
             const sendBtn = document.getElementById('otpSend');
             const proceed = document.querySelector('#submitOtp');
             const alert1 = document.querySelector('.alerts');
-            alert1.innerHTML = "<h4 id='alt_otpSend'>Please enter the OTP, which has been sent on above mentioned e-mail address.</h4>"
+            let alt = document.createElement('h4')
+            alt.innerHTML= 'Please enter the OTP, which has been sent on above mentioned e-mail address.';
+            alt.id = 'alt_otpSend';
+            alert1.appendChild(alt)
+            // alert1.innerHTML = "<h4 id='alt_otpSend'>Please enter the OTP, which has been sent on above mentioned e-mail address.</h4>"
             proceed.disabled = false;
             sendBtn.disabled = true;
             codes[0].focus()
@@ -187,20 +191,11 @@
 
     }
     document.body.addEventListener('keypress', (e)=>{
-        console.log(e.key);
         if((e.key=="Enter")&& !otp_send){
             document.getElementById('otpSend').click();
         }
     })
-    const alert2 = document.querySelector('#alt_wrongOtp');
-    msg = "{{message}}"
-    if(!msg){
-        alert2.style.display = 'none';
-        
-    }
-    else{
-        codes[0].focus()
-    }
+    
 
     document.querySelector('#submitOtp').addEventListener('click', submitOtp)
 
@@ -225,7 +220,16 @@
         .catch((e)=>{console.log(e)})
         {% for message in messages %}
             {% if message.tags == 'error' %}
-                document.querySelector('#alt_wrongOtp').innerHTML = '{{message}}'
+                const alert2 = document.querySelector('#alt_otpSend');
+                let msg = "{{message}}"
+                console.log(msg)
+                if(!msg){
+                    alert2.style.display = 'none';
+                }
+                else{
+                    alert2.innerHTML = msg;
+                    codes[0].focus()
+                }
             {% endif %}
         {% endfor %}
 

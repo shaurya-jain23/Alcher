@@ -107,7 +107,7 @@ def success(request):
 def failure(request):
     return render(request, "Redirecting_System/failure.html")
 
-
+@csrf_exempt
 def verify_otp(request):
     try:
         print(request.body, "verify")
@@ -116,6 +116,7 @@ def verify_otp(request):
         # Combine the OTP values into a single string
         # otp = ''.join(otp_values)
         otp = json.loads(request.body)['otp']
+        print(otp)
         otpID = request.session.get('OTPId')
         snapshots = db.collection('all_otps').where('id', '==', otpID).stream() #
         users = []
@@ -124,11 +125,11 @@ def verify_otp(request):
             formattedData = user.to_dict()
             otp1 = formattedData['otp']
             users.append(user.reference)
-
         OTP = int(otp)
         email = request.session.get('LeaderEmail')
-        # print(OTP, otp1)
+        print(OTP, otp1)
         if OTP == otp1:
+            print('hello')
             verifiedUsers = db.collection('verified_user').where('email', '==', email).stream()
             userPasses = []
             for user in verifiedUsers:
@@ -145,14 +146,16 @@ def verify_otp(request):
                 request.session['emailId'] = doc_ref.id
                 return redirect('passes')
             else:
-                return redirect('failure')
-        
-        context = {
-            'message': "Incorrect OTP",
-            'email': email
-        }
+                render(request, "Redirecting_System/faliure.html")
+        else:
+            context = {
+                'message': "Incorrect OTP",
+                'email': email
+            }
+            print('error')
+            messages.error(request,  'Incorrect OTP')
         # return render(request, 'Redirecting_System/otp.html', context)
-        messages.error(request,  'Incorrect OTP')
+        
     except Exception as e:
         print(e)
     return JsonResponse({"otp": otp})

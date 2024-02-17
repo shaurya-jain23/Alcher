@@ -70,7 +70,7 @@ h3{
 .einput img{
     display: none;
     position: absolute;
-    top: 5px;
+    top: 0.2vw;
     right: 0;
     height: 20px;
 }
