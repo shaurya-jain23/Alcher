@@ -235,6 +235,8 @@ def user_data(request):
             return Response({'error': 'Email is required'}, status=status.HTTP_400_BAD_REQUEST)
         users=[]
         user_ref = db.collection('verified_user').where('email','==',email).stream()
+        if not user_ref:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
         print(email)
         exist = False
         for user in user_ref:
@@ -288,20 +290,20 @@ def verifyid(request):
 def send_email_with_pdf(email,pass_id):
     from_email = settings.EMAIL_HOST_USER
     print(from_email)
-    email = EmailMessage(
+    email1 = EmailMessage(
         'Hello',
         'Body goes here',
         from_email,
         [email],
-        headers = {'Reply-To': 's.sanyal@iitg.ac.in'}
     )
     file_path = f'imgs/{pass_id}.jpg'
     file_url = 'media/' + file_path
     print(file_url)
     with open(file_url, 'rb') as img_file:
     # Attach the image file with the name and the MIME type
-        email.attach('Cards.jpg', img_file.read(), 'image/jpeg')
-    email.send()
+        email1.attach('Cards.jpg', img_file.read(), 'image/jpeg')
+    email1.send()
+    return HttpResponse('Email sent')
 
 def generate_jpg_for_transaction(transaction_data):
     script_dir = os.path.dirname(__file__)
@@ -324,7 +326,7 @@ def generate_jpg_for_transaction(transaction_data):
             aztec.make(fit=True)
             if pass_type == 'ebsp':
                 aztec_img = aztec.make_image(fill_color="white", back_color="#677DE0")
-            elif pass_type == 'NORMAL':
+            elif pass_type == 'NSP':
                 aztec_img = aztec.make_image(fill_color="white", back_color="#F28E15")
                 qr_code_path = f'aztec_code_{user["user_id"]}.png'
                 aztec_img.save(qr_code_path)
@@ -541,11 +543,15 @@ def automation(request):
             subject = 'just for testing'
             message='you have been verified'
             from_email = settings.EMAIL_HOST_USER
+            print(from_email)
             jpg_bytes_list = generate_jpg_for_transaction([{'user_id':id,'pass_type':"NSP"}])
             img_storage = default_storage
             for i, jpg_bytes in enumerate(jpg_bytes_list):
-                file_path = img_storage.save(f'media/imgs/{id}.jpg', ContentFile(jpg_bytes))
-            send_email_with_pdf(email,id)
+                file_path = img_storage.save(f'imgs/{id}.jpg', ContentFile(jpg_bytes))
+            try:
+                send_email_with_pdf(email,id)
+            except Exception as e:
+                print(e)
             index+=1
         if data['PAYMENT_STATUS'][i]== 'PENDING':
             pendings = db.collection('pending_user').document()
@@ -554,4 +560,4 @@ def automation(request):
             }
             pendings.set(pending)
     db.collection('index').document('rcT6Wb8kyh07erua4VaM').update({'index':index})
-automation(3)
+    return HttpResponse("done")
