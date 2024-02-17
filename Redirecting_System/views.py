@@ -29,13 +29,13 @@ from django.core.files.base import ContentFile
 from django.core.files.storage import FileSystemStorage
 from PIL import Image, ImageDraw, ImageFont
 import os
+import ast
 def get_firebase_app(name):
     try:
         return firebase_admin.get_app(name)
     except ValueError:
         cred = credentials.Certificate('Redirecting_System/serviceAccountCredential.json')
         return firebase_admin.initialize_app(cred, name=name)
-
 db = firestore.client(app=get_firebase_app('alcher-redirecting-system'))
 
 
@@ -206,7 +206,7 @@ def verify_otp(request):
     #     'message': "Incorrect OTP",
     #     'email': email
     # }
-    return render(request, 'Redirecting_System/otp.html', context)
+    # return render(request, 'Redirecting_System/otp.html', context)
 
 def download_file(url):
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)+"../Redirecting_System"))
@@ -226,67 +226,7 @@ def generate_random_id():
         if id not in document_ids:
             print(id)
             return id 
-def automation(request):
-    dir = download_file('https://dev.bharatversity.com/events/website/api/event-amount-overview-excel-sheet-api/550b0b35-5bd1-47c0-88b2-8a952dd08e08')
-    index=db.collection('index').document('rcT6Wb8kyh07erua4VaM').get().to_dict()['index']
-    data=pd.read_excel('Book1.xlsx')
-    pendinguser=db.collection('pending_user').stream()
-    pend=[]
-    for puser in pendinguser:
-        user=puser.to_dict()
-        ind = user['index']
-        if data['PAYMENT_STATUS'][ind]== 'SUCCESS':
-            verified = db.collection('verified_user').document(unique_id(7))
-            email=data['EMAIL'][ind]
-            verify={
-                "name": data['FIRST_NAME'][ind] + " " + data['LAST_NAME'][ind],
-                "gender": data['GENDER'][ind],
-                "contact no.":data['PHONE_NUMBER'][ind],
-                "email":data['EMAIL'][ind],
-                "Booking id":data['BOOKING_ID'][ind],
-                "payment_status":data['PAYMENT_STATUS'][ind],
-                "Amount":data['AMOUNT_PAID'][ind],
-            }
-            verified.set(verify)
-            subject = 'just for testing'
-            message='you have been verified'
-            from_email = settings.EMAIL_HOST_USER
-            send_mail(subject, message, from_email, [email])
-        pend.append(user)
-        
-    for i in range(index,len(data)):
-        if data['PAYMENT_STATUS'][i]== 'SUCCESS':
-            verified = db.collection('verified_user').document(unique_id(7))
-            email=data['EMAIL'][i]
-            verify={
-                "name": data['FIRST_NAME'][i] + " " + data['LAST_NAME'][i],
-                "gender": data['GENDER'][i],
-                "contact no.": int(data['PHONE_NUMBER'][i]),
-                "email": data['EMAIL'][i],
-                "Booking id": data['BOOKING_ID'][i],
-                "payment_status": data['PAYMENT_STATUS'][i],
-                "Amount": int(data['AMOUNT_PAID'][i]),
-            }
-            verified.set(verify)
-            subject = 'just for testing'
-            message='you have been verified'
-            from_email = settings.EMAIL_HOST_USER
-            send_mail(subject, message, from_email, [email])
-            index+=1
-        if data['PAYMENT_STATUS'][i]== 'PENDING':
-            pendings = db.collection('pending_user').document()
-            pending={
-                "name": data['FIRST_NAME'][i] + " " + data['LAST_NAME'][i],
-                "gender": data['GENDER'][i],
-                "contact no.": int(data['PHONE_NUMBER'][i]),
-                "email": data['EMAIL'][i],
-                "Booking id": data['BOOKING_ID'][i],
-                "payment_status": data['PAYMENT_STATUS'][i],
-                "Amount": int(data['AMOUNT_PAID'][i]),
-                "index": i,
-            }
-            pendings.set(pending)
-    db.collection('index').document('rcT6Wb8kyh07erua4VaM').update({'index':index})
+
 @api_view(['GET'])
 def user_data(request):
     try:
@@ -345,27 +285,22 @@ def verifyid(request):
         return Response({'error': 'An error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 
-def send_email_with_pdf(request):
+def send_email_with_pdf(email,pass_id):
     from_email = settings.EMAIL_HOST_USER
+    print(from_email)
     email = EmailMessage(
         'Hello',
         'Body goes here',
         from_email,
-        ['shivamgupta@iitg.ac.in'],
+        [email],
         headers = {'Reply-To': 's.sanyal@iitg.ac.in'}
     )
-    with open('IMG20240211171953.jpg', 'rb') as img_file:
+    file_path = f'imgs/{pass_id}.jpg'
+    file_url = 'media/' + file_path
+    print(file_url)
+    with open(file_url, 'rb') as img_file:
     # Attach the image file with the name and the MIME type
-        email.attach('IMG20240211171953.jpg', img_file.read(), 'image/jpeg')
-    # Open the file in bynary mode
-    # binary_file = open('ss.pdf', 'rb')
-
-    # Attach the file with the name and the MIME type
-    # email.attach('ss.pdf', binary_file.read(), 'application/pdf')
-
-    # Don't forget to close the file after you have finished processing it
-    # binary_file.close()
-
+        email.attach('Cards.jpg', img_file.read(), 'image/jpeg')
     email.send()
 
 def generate_jpg_for_transaction(transaction_data):
@@ -380,7 +315,7 @@ def generate_jpg_for_transaction(transaction_data):
         if pass_type == 'ebsp':
             img = Image.open("images/EBSP.png")
             
-        elif pass_type == 'NORMAL':
+        elif pass_type == 'NSP':
             image_path = os.path.join(script_dir, "NSP.jpg")
             img = Image.open(image_path)
             qr_code_data = 'http://localhost:8000/otp/?user_id=' + user['user_id']
@@ -529,3 +464,94 @@ def passPage(request):
 #direct entry : You are not Authanticated to access this page
 #invalid_url : your card is not valid
 #different: your email is not associated with card
+def automation(request):
+    # dir = download_file('https://dev.bharatversity.com/events/website/api/event-amount-overview-excel-sheet-api/550b0b35-5bd1-47c0-88b2-8a952dd08e08')
+    index=db.collection('index').document('rcT6Wb8kyh07erua4VaM').get().to_dict()['index']
+    data=pd.read_excel('/Users/shivamg/Downloads/book.xlsx')
+    print(data['PAYMENT_STATUS'][0])
+    pendinguser=db.collection('pending_user').stream()
+    pend=[]
+    for puser in pendinguser:
+        user=puser.to_dict()
+        ind = int(user['index'])
+        print(ind)
+        if data['PAYMENT_STATUS'][ind]  == 'COMPLETED':
+            teamd = user['TEAM_DETAILS'][ind]
+            teamd= ast.literal_eval(teamd)
+            for mem in teamd:
+                verified = db.collection('verified_user').document(generate_random_id(2))
+                mem1 = mem.split('-->')
+                verify={
+                    "name": mem1[0],
+                    "gender": mem1[2],
+                    "contact no.":int(mem1[3]),
+                    "email":mem1[1],
+                    "pass_type": "NSP",
+                }
+                verified.set(verify)
+            verified = db.collection('verified_user').document(generate_random_id())
+            email=data['EMAIL'][ind]
+            verify={
+                "name": data['FIRST_NAME'][ind] + " " + data['LAST_NAME'][ind],
+                "gender": data['GENDER'][ind],
+                "contact no.":data['PHONE_NUMBER'][ind],
+                "email":data['EMAIL'][ind],
+                "Booking id":data['BOOKING_ID'][ind],
+                "days_entered":[False,False,False],
+                "payment_status":data['PAYMENT_STATUS'][ind],
+                "Amount":data['AMOUNT_PAID'][ind],
+            }
+            verified.set(verify)
+            subject = 'just for testing'
+            message='you have been verified'
+            from_email = settings.EMAIL_HOST_USER
+            send_mail(subject, message, from_email, [email])
+        pend.append(user)
+        
+    for i in range(index,len(data)):
+        if data['PAYMENT_STATUS'][i]  == 'COMPLETED':
+            teamd = data['TEAM_DETAILS'][i]
+            team= ast.literal_eval(teamd)
+            for mem in team:
+                verified = db.collection('verified_user').document(generate_random_id())
+                mem1 = mem.split('-->')
+                verify={
+                    "name": mem1[0],
+                    "gender": mem1[3],
+                    "contact no.":int(mem1[2]),
+                    "email":mem1[1],
+                    "pass_type": "NSP",
+                    "days_entered":[False,False,False],
+                }
+                verified.set(verify)
+            id=generate_random_id()
+            verified = db.collection('verified_user').document(id)
+            email=data['EMAIL'][i]
+            verify={
+                "name": data['FIRST_NAME'][i] + " " + str(data['LAST_NAME'][i]),
+                "gender": data['GENDER'][i],
+                "contact no.": int(data['PHONE_NUMBER'][i]),
+                "email": data['EMAIL'][i],
+                "Booking id": data['BOOKING_ID'][i],
+                "payment_status": data['PAYMENT_STATUS'][i],
+                "days_entered":[False,False,False],
+                "Amount": int(data['AMOUNT_PAID'][i]),
+            }
+            verified.set(verify)
+            subject = 'just for testing'
+            message='you have been verified'
+            from_email = settings.EMAIL_HOST_USER
+            jpg_bytes_list = generate_jpg_for_transaction([{'user_id':id,'pass_type':"NSP"}])
+            img_storage = default_storage
+            for i, jpg_bytes in enumerate(jpg_bytes_list):
+                file_path = img_storage.save(f'media/imgs/{id}.jpg', ContentFile(jpg_bytes))
+            send_email_with_pdf(email,id)
+            index+=1
+        if data['PAYMENT_STATUS'][i]== 'PENDING':
+            pendings = db.collection('pending_user').document()
+            pending={
+                "index": i,
+            }
+            pendings.set(pending)
+    db.collection('index').document('rcT6Wb8kyh07erua4VaM').update({'index':index})
+automation(3)

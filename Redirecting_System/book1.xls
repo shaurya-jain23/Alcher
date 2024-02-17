@@ -10,6 +10,7 @@
       <th>BOOKING_ID</th>
       <th>PAYMENT_STATUS</th>
       <th>AMOUNT_PAID</th>
+      <th>TEAM_DETAILS</th>
     </tr>
   </thead>
   <tbody>
@@ -23,6 +24,7 @@
       <td>BVALC14085643</td>
       <td>PENDING</td>
       <td>51700.0</td>
+      <td>[]</td>
     </tr>
     <tr>
       <th>1</th>
@@ -34,6 +36,7 @@
       <td>BVALC12545641</td>
       <td>COMPLETED</td>
       <td>300.0</td>
+      <td>['AkshatAks--&gt;akshat.akshat@iitg.ac.in--&gt;8875833508--&gt;MALE']</td>
     </tr>
     <tr>
       <th>2</th>
@@ -45,6 +48,7 @@
       <td>BVALC12335642</td>
       <td>COMPLETED</td>
       <td>300.0</td>
+      <td>['Priyanshu Sinha--&gt;priyanshusinha1632@gmail.com--&gt;9650757099--&gt;MALE']</td>
     </tr>
     <tr>
       <th>3</th>
@@ -56,6 +60,7 @@
       <td>BVALC14515645</td>
       <td>PENDING</td>
       <td>51700.0</td>
+      <td>[]</td>
     </tr>
     <tr>
       <th>4</th>
@@ -67,6 +72,7 @@
       <td>BVALC15065649</td>
       <td>NaN</td>
       <td>NaN</td>
+      <td>[]</td>
     </tr>
   </tbody>
 </table>
