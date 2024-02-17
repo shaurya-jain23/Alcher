@@ -1,25 +1,29 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% comment %} <link rel="stylesheet" href="{% static 'register/register.css' %}"> {% endcomment %}
+    {% comment %}
+    <link rel="stylesheet" href="{% static 'register/register.css' %}"> {% endcomment %}
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     {% block title %}
-    
+
     {% endblock title %}
 </head>
+
 <body>
     <!-- NavBar  -->
     <div class="navContainer">
         <div class="navbar">
             <div class="left">
-            <a href="{% url 'home' %}" style="cursor: pointer; text-decoration: none; display: flex; align-items: center; color: white;">
-                <img id="alcherlogo1" src="{% static 'images/alcherlogo1.svg' %}" alt="alcherlogo">
-                <h1>ALCHERINGA</h1>
-            </a>
+                <a href="{% url 'home' %}"
+                    style="cursor: pointer; text-decoration: none; display: flex; align-items: center; color: white;">
+                    <img id="alcherlogo1" src="{% static 'images/alcherlogo1.svg' %}" alt="alcherlogo">
+                    <h1>ALCHERINGA</h1>
+                </a>
             </div>
         </div>
     </div>
@@ -29,10 +33,11 @@
         <img src="{% static 'images/loader.png'  %}" alt="loader">
         <img src="{% static 'images/alcher.png'  %}" alt="logo">
         <div class="cont">
-          <h1>LOADING <div class="dots"></div></h1>
-          <h2>Welcome to Alcheringa!! We are loading up. <br> please wait...</h2>
+            <h1>LOADING <div class="dots"></div>
+            </h1>
+            <h2>Welcome to Alcheringa!! We are loading up. <br> please wait...</h2>
         </div>
-    </div>    
+    </div>
 
     {% block page %}
     {% endblock page %}
@@ -53,27 +58,28 @@
             <div class="contact">
                 <div class="left-detail">
                     <div class="contact-info">
-                        <span class="namee">Siddant Singh</span>
-                        <span class="phone">+91 9310859978</span>
-                        <span class="emaile">siddant.s@alcheringa.in</span>
+                        <span class="name">Abhishek Rathi</span>
+                        <span class="phone">Card Head</span>
+                        <span class="emaile">+91 63770 01937</span>
                     </div>
                     <div class="contact-info">
-                        <span class="namee">Siddant Singh</span>
-                        <span class="phone">+91 9310859978</span>
-                        <span class="emaile">siddant.s@alcheringa.in</span>
+                        <span class="name">Deepan Banerjee</span>
+                        <span class="phone">Card Head</span>
+                        <span class="emaile">+91 88394 77943</span>
                     </div>
                 </div>
                 <div class="following">
-                    <span class="follow-us" >Follow us on</span>
+                    <span class="follow-us">Follow us on</span>
                     <div id="footer-icons">
                         <a class="icon" href="/" target="_blank">
-                            <i class="fa-brands fa-instagram insta"  style="color: #E8EDD9;"></i>
+                            <i class="fa-brands fa-instagram insta" style="color: #E8EDD9;"></i>
                         </a>
                         <a class="icon" href="" target="_blank">
-                            <img src="{% static 'images/facebook.svg' %}" class="facebook"  alt='' />
+                            <img src="{% static 'images/facebook.svg' %}" class="facebook" alt='' />
                         </a>
-                        <a class="icon" href="https://twitter.com/alcheringaiitg" target="_blank"><i class="fa-brands fa-x-twitter X" style="color: #E8EDD9;"></i></i></a>
-                        <a class="icon"  href="https://www.youtube.com/c/AlcheringaIITG" target="_blank">
+                        <a class="icon" href="https://twitter.com/alcheringaiitg" target="_blank"><i
+                                class="fa-brands fa-x-twitter X" style="color: #E8EDD9;"></i></i></a>
+                        <a class="icon" href="https://www.youtube.com/c/AlcheringaIITG" target="_blank">
                             <img src="{% static 'images/youtube.svg' %}" class="youtube" alt='' />
                         </a>
                     </div>
@@ -81,16 +87,38 @@
             </div>
             <div class="creator-info">
                 <div style="display: inline;" class="credit">Designed and Developed by <p
-                        style="display: inline;border-bottom:1px solid white;">Alcher Creatives</p> & <p
-                        style="display: inline;;border-bottom:1px solid white"> Alcher Web Operations</p>
+                        style="display: inline;border-bottom:1px solid white;">Alcher Creatives</p> &
+                    <div style="display: inline-block; position: relative;">
+                        <span style="border-bottom:1px solid white">Alcher Web Operations</span>
+                        <div
+                            style="opacity: 0; visibility: hidden; position: absolute; left: 100%; bottom: 100%; background-color: rgba(0, 0, 0, 0.5); color: white; min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); padding: 12px 16px; z-index: 1; transition: visibility 0s 0.5s, opacity 0.5s linear; border-radius: 5px;font-family: Uncut-Sans_Bold;">
+                            Ashmit Verma<br>
+                            Shaurya Jain<br>
+                            Shivam Gupta<br>
+                            Saraswata Sanyal
+                        </div>
+                    </div>
                 </div>
                 <div class="business-contact">
                     <p style="margin-bottom:0.5vh;">For Business Enquiries</p>
                     <p class="pub" style="margin-top:0.5vh;margin-bottom:0vh;">publicrelations24@alcheringa.in</p>
                 </div>
             </div>
+            <script>
+                var div = document.querySelector('.credit > div');
+                div.addEventListener('mouseover', function() {
+                    this.querySelector('div').style.visibility = 'visible';
+                    this.querySelector('div').style.opacity = '1';
+                    this.querySelector('div').style.transitionDelay = '0s';
+                });
+                div.addEventListener('mouseout', function() {
+                    this.querySelector('div').style.visibility = 'hidden';
+                    this.querySelector('div').style.opacity = '0';
+                    this.querySelector('div').style.transitionDelay = '0.5s';
+                });
+            </script>
         </div>
-        </div>
+    </div>
     </div>
     {% comment %} <div class="mobile-footer">
         <div class="ribbon-case">
@@ -101,14 +129,14 @@
         <div class="contact-footer">
             <div class="people-contact">
                 <div style="margin-bottom:4vh" class="contact-info">
-                    <span class="name">Siddant Singh</span>
-                    <span class="phone">+91 9310859978</span>
-                    <span class="emaile">siddant.s@alcheringa.in</span>
+                    <span class="name">Abhishek Rathi</span>
+                    <span class="phone">Card Head</span>
+                    <span class="emaile">+91 63770 01937</span>
                 </div>
                 <div class="contact-info">
-                    <span class="name">Siddant Singh</span>
-                    <span class="phone">+91 9310859978</span>
-                    <span class="emaile">siddant.s@alcheringa.in</span>
+                    <span class="name">Deepan Banerjee</span>
+                    <span class="phone">Card Head</span>
+                    <span class="emaile">+91 88394 77943</span>
                 </div>
             </div>
             <div class="following-footer">
@@ -129,7 +157,7 @@
 
     </div> {% endcomment %}
     <!-- Footer Ends  -->
-    
+
 </body>
 
 {% block script %}

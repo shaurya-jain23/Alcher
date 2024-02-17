@@ -234,7 +234,8 @@
                 if (data.success) {
                     window.location.href = "{% url 'passes' %}";
                 } else if(data.failure){
-                    window.location.href = "{% url 'failure' %}";
+
+                    window.location.href = "{% url 'failure' %}" + `?message=${data.message}`;
                 }
                 else if(data.message == "Incorrect OTP"){
                     const alert2 = document.querySelector('#alt_otpSend');
