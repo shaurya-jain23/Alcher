@@ -186,18 +186,41 @@ h1 {
 }
 
 .big {
-    background-image: url("../images/footer-background.svg"), url('../images/texture.png') !important;
-    background-blend-mode: color-burn;
+    background-image: url("../images/footer-background.svg")!important;
     background-size: cover;
-    background-color: #181818;
     background-repeat: no-repeat;
+    background-color: #181818;
     background-position-y: 7vw;
+    position: relative;
+}
+.big::before{
+    position: absolute;
+    content: "";
+    min-height: 100%;
+    width: 100vw;
+    background: url('../images/texture.png');
+    background-size: cover;
+    mix-blend-mode: color-burn ;
+    background-repeat: repeat;
+    background-position: center;
+    overflow: hidden;
+   
 }
 
 .star {
     position: absolute;
     width: 4vw;
+    top: -3vw;
+    right: -7vw;
     transform: translate(1vw, -3vw);
+    transform: all 2s;
+    animation: blink 2.5s infinite alternate;
+    animation-timing-function: ease-in-out;
+}
+
+@keyframes blink {
+    0% {transform: scale(1); }
+    100% {transform: scale(1.2); opacity: 0;}
 }
 
 .star-2 {
@@ -205,12 +228,20 @@ h1 {
     width: 2vw;
     left: 11%;
     bottom: 13vw;
+    transform: all 2s;
+    animation: blink 2.5s infinite alternate;
+    animation-timing-function: ease-in-out;
 }
 
 .star-3 {
     position: absolute;
     width: 5vw;
-    transform: translate(78vw, 1vw);
+    /* transform: translate(78vw, 1vw); */
+    right: 20vw;
+    bottom: 2vw;
+    transform: all 2s;
+    animation: blink 2.5s infinite alternate-reverse;
+    animation-timing-function: ease-in-out;
 }
 
 .footer {

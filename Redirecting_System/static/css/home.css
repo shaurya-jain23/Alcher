@@ -102,6 +102,7 @@ body{
 .passContainer{
     width: 100%;
     position: relative;
+    padding-bottom: 20vw;
 }
 
 .hand {
@@ -119,12 +120,12 @@ body{
 }
 .downhand{
     left: -12vw;
-    bottom: -8vw;
+    /* bottom: -8vw; */
     height: 11vw;
     position: absolute;
     overflow: hidden;
-    -webkit-animation: mover 1s infinite  alternate;
-    animation: mover 1s infinite  alternate;
+    -webkit-animation: mover 1s infinite  alternate-reverse;
+    animation: mover 1s infinite  alternate-reverse;
 }
 #star1{
     position: absolute;
@@ -132,7 +133,8 @@ body{
     right: -2vw;
     height: 7vw;
     overflow: hidden;
-    animation: blink 2s infinite alternate;
+    transform: all 2s;
+    animation: blink 2.5s infinite alternate;
     animation-timing-function: ease-in-out;
 }
 #star2{
@@ -141,7 +143,8 @@ body{
     left: -3vw;
     height: 4vw;
     overflow: hidden;
-    animation: blink 2s infinite alternate-reverse;
+    transform: all 2s;
+    animation: blink 2.5s infinite alternate-reverse;
     animation-timing-function: ease-in-out;
 }
 #star3{
@@ -150,7 +153,8 @@ body{
     right: -2vw;
     height: 3.5vw;
     overflow: hidden;
-    animation: blink 2s infinite alternate;
+    transform: all 2s;
+    animation: blink 2.5s infinite alternate;
     animation-timing-function: ease-in-out;
 }
 #star4{
@@ -159,7 +163,8 @@ body{
     right: 40vw;
     height: 2.5vw;
     overflow: hidden;
-    animation: blink 2s infinite alternate-reverse;
+    transform: all 2s;
+    animation: blink 2.5s infinite alternate-reverse;
     animation-timing-function: ease-in-out;
 }
 #star5{
@@ -168,7 +173,8 @@ body{
     left: -1vw;
     height: 3.5vw;
     overflow: hidden;
-    animation: blink 2s infinite alternate;
+    transform: all 2s;
+    animation: blink 2.5s infinite alternate;
     animation-timing-function: ease-in-out;
 }
 #passesHead{
@@ -355,9 +361,15 @@ body{
 }
 @keyframes blink {
     0% {transform: scale(1); }
-    100% {transform: scale(1.2); }
+    100% {transform: scale(1.2); opacity: 0;}
 }
 @media(max-width:600px){
+    .waves{
+        position: absolute ;
+        bottom: -10px;
+        left: 0;
+        width: 100%;
+    }
     #passesHead{
         font-size: 7vw;
     }
