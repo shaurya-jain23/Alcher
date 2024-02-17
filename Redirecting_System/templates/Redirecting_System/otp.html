@@ -209,7 +209,7 @@
         }
         console.log(otp1);
         fetch("{% url 'verify_otp' %}",{
-                method: "POST", 
+                method: "POST", 0
                 body: JSON.stringify({
                     otp: otp1
                 }),
