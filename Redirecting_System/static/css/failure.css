@@ -3,17 +3,17 @@
     color: #DB5356;
     font-weight: 800;
     text-transform: uppercase;
-    font-size: 2vw;
+    font-size: 1.6rem;
     position: relative;
 }
 .failure-image{
     padding-right: 0.5vw;
-    width: 2vw;
+    width: 1.4rem;
 }
+
 .submitbtn {
-    margin-left: 5vw;
+    margin-left: 0 !important;
     background-color: #2DA38F;
-    font-size: 2.4vw;
     padding: 0.2vw 1.2vw;
     color: #181818;
     border: none;
@@ -26,4 +26,40 @@
 }
 .line{
     margin-bottom: 1rem;
+}
+@media (max-width: 650px) {
+    .redline {
+        font-size: 4vw;
+    }
+    .failure-image {
+        width: 5vw;
+    }
+    .submitbtn {
+        font-size: 4vw;
+        padding: 0.5vw 2vw;
+    }
+    .container {
+        padding: 40px 0;
+    }
+    .subtitle{
+        font-size: 2.5vw !important;
+    }
+}
+@media(max-width:450px){
+    .redline {
+        font-size: 5vw;
+    }
+    .failure-image {
+        width: 5.4vw;
+    }
+    .submitbtn {
+        font-size: 5vw;
+        padding: 0.5vw 2.5vw;
+    }
+    .subtitle{
+        font-size: 3vw !important;
+    }
+    .container {
+        padding: 20px 0;
+    }
 }

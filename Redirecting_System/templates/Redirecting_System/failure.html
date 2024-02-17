@@ -10,10 +10,14 @@
 <div class="container"style="display: flex;flex-direction: column;justify-content: center;">
 <div class="line" style="display: flex;justify-content: center;">
 <img src="{% static "images/Vector2.svg" %}" alt="failure" class="failure-image" />
-<div class="redline" style="font-family: 'Uncut-Sans'">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorem, illum?</div>
+{%if message%}
+<div class="redline" style="font-family: 'Uncut-Sans'">{{message}}</div>
+{%else%}
+<div class="redline" style="font-family: 'Uncut-Sans'">You are not Authanticated to access this page</div>
+{%endif%}
 </div>
 <div style="display: flex;justify-content: center;">
-    <div style="font-family: 'Uncut-Sans';color: white;font-size: 1.5vw;">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorem, illum?</div>
+    <div class="subtitle" style="font-family: 'Uncut-Sans';color: white;font-size: 1.2rem;">Please check your details again</div>
 </div>
 <div style="display: flex;justify-content: center;">
     <button type="submit" class="submitbtn bigf" style="background-color: yellow;"><a style="text-decoration: none; color: black;" href="{% url 'home' %}">BUY YOUR CARDS HERE</a></button>

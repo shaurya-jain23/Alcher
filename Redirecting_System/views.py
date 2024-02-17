@@ -105,7 +105,7 @@ def success(request):
 
 
 def failure(request):
-    return render(request, "Redirecting_System/failure.html")
+    return render(request, "Redirecting_System/failure.html", )
 
 @csrf_exempt
 def verify_otp(request):
@@ -146,7 +146,8 @@ def verify_otp(request):
                 request.session['emailId'] = doc_ref.id
                 return redirect('passes')
             else:
-                render(request, "Redirecting_System/faliure.html")
+                message="Card or User is not valid"
+                return render(request, "Redirecting_System/failure.html", {"message":message})
         else:
             context = {
                 'message': "Incorrect OTP",
@@ -154,11 +155,57 @@ def verify_otp(request):
             }
             print('error')
             messages.error(request,  'Incorrect OTP')
+            # else:
+    #         return render(request, "Redirecting_System/failure.html", {"message":message})
+    #         message="Card or User is not valid"
         # return render(request, 'Redirecting_System/otp.html', context)
         
     except Exception as e:
         print(e)
     return JsonResponse({"otp": otp})
+    # # Get the list of OTP values from the POST data
+    # otp_values = request.POST.getlist('otp')
+    # # Combine the OTP values into a single string
+    # otp = ''.join(otp_values)
+
+    # otpID = request.session.get('OTPId')
+    # snapshots = db.collection('all_otps').where('id', '==', otpID).stream() #
+    # users = []
+    # otp1 = 0
+    # for user in snapshots:
+    #     formattedData = user.to_dict()
+    #     print(formattedData)
+    #     otp1 = formattedData['otp']
+    #     users.append(user.reference)
+
+    # OTP = int(otp)
+    # email = request.session.get('LeaderEmail')
+    # print(OTP, otp1)
+    # if OTP == otp1:
+    #     verifiedUsers = db.collection('verified_user').where('email', '==', email).stream()
+    #     userPasses = []
+    #     for user in verifiedUsers:
+    #         data = user.to_dict()
+    #         userid = request.session.get('pass_id')
+    #         if userid == user.id:
+    #             userPasses.append(user.id)
+    #     if len(userPasses) != 0:
+    #         doc_ref = db.collection('all_emails').document()
+    #         doc_ref.set({
+    #             'id': doc_ref.id,
+    #             'email': email,
+    #         })
+    #         request.session['emailId'] = doc_ref.id
+    #         return redirect('passes')
+    #     else:
+    #         message="Card or User is not valid"
+    #         return render(request, "Redirecting_System/failure.html", {"message":message})
+    
+    # context = {
+    #     'message': "Incorrect OTP",
+    #     'email': email
+    # }
+    return render(request, 'Redirecting_System/otp.html', context)
 
 def download_file(url):
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)+"../Redirecting_System"))
@@ -320,66 +367,6 @@ def send_email_with_pdf(request):
 
     email.send()
 
-# def generate_pdf_for_transaction(transaction_data):
-#     script_dir = os.path.dirname(__file__)
-#     pdf_bytes_list = []  # Initialize the list to hold byte strings of each PDF
-#     for user in transaction_data:
-#         pass_type = user['pass_type']
-        
-#         pdf = FPDF('L', 'mm', (270, 870))
-#         pdf.add_page()
-#         pdf_bytes_list = []
-#         if pass_type == 'ebsp':
-#             pdf.Image("images/EBSP.png", 0, 0, pdf.w, pdf.h)
-            
-#         elif pass_type == 'NORMAL':
-#             image_path = os.path.join(script_dir, "NSP.jpg")
-#             pdf.image(image_path, 0, 0, pdf.w, pdf.h)
-#             # pdf.image("NSP.jpg", 0, 0, pdf.w, pdf.h)
-#             qr_code_data = 'https://www.example.com/' + user['user_id']  # Use 'user' instead of 'transaction_data'
-#             aztec = qrcode.QRCode(version=1, box_size=10, border=4)
-#             aztec.add_data(qr_code_data)
-#             aztec.make(fit=True)
-#             if pass_type == 'ebsp':
-#                 aztec_img = aztec.make_image(fill_color="white", back_color="#677DE0")
-#             elif pass_type == 'NORMAL':
-#                 aztec_img = aztec.make_image(fill_color="white", back_color="#F28E15")
-#                 qr_code_path = f'aztec_code_{user["user_id"]}.png'  # Use 'user' instead of 'transaction_data'
-                   
-#                 aztec_img.save(qr_code_path)
-#                 aztec_img = aztec_img.resize((85, 85))
-#                 pdf.image(qr_code_path, pdf.w - 365, pdf.h - 230, 150, 150)  # Use 'qr_code_path' instead of 'aztec_code.png'
-#                 pdf.add_page()
-#                 image_path = os.path.join(script_dir, "BoardPassBack2.png")
-#                 pdf.image(image_path, 0, 0, pdf.w, pdf.h)
-#                 # print("Hii") 
-#                 # pdf.image("images/BoardPassBack2.png", 0, 0, pdf.w, pdf.h)
-                
-#         else : 
-#             print("kharab")
-            
-#         pdf_string = pdf.output(dest='S')
-
-#         # Create a BytesIO object
-#         output = io.BytesIO()
-
-#         # Write the PDF string to the BytesIO object
-#         output.write(pdf_string.encode('latin1'))
-
-#         # Get the value of the BytesIO object
-#         output.seek(0)
-#         pdf_bytes = output.read()
-
-#         # Print the byte
-#         # Close the BytesIO object
-#         output.close()
-#         pdf_bytes_list.append(pdf_bytes)  # Append byte string of current PDF to the list
-
-#     return pdf_bytes_list  # Return list of byte strings
- 
-
-
-
 def generate_jpg_for_transaction(transaction_data):
     script_dir = os.path.dirname(__file__)
     jpg_bytes_list = []  # Initialize the list to hold byte strings of each JPEG
@@ -528,7 +515,8 @@ def passPage(request):
                 file_url = settings.MEDIA_URL + file_path
                 userPasses.append(file_url)
     else:
-        return redirect(failure)
+        message="Card Not found"
+        return render(request, "Redirecting_System/failure.html", {"message":message})
     # verifiedUsers = db.collection('verified_user').where('email', '==', email).stream()
     # 
     # for user in verifiedUsers:
@@ -537,3 +525,6 @@ def passPage(request):
     #     file_url = settings.MEDIA_URL + file_path
     #     userPasses.append(file_url)
     return render(request,"Redirecting_System/passes.html", {'passes': userPasses})
+#direct entry : You are not Authanticated to access this page
+#invalid_url : your card is not valid
+#different: your email is not associated with card

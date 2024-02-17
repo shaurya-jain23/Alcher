@@ -208,7 +208,7 @@ button {
 .submitbtn {
     margin-left: 5vw;
     background-color: #2DA38F;
-    font-size: 2.4vw;
+    font-size: 1.9rem;
     padding: 0.2vw 1.2vw;
     color: #181818;
     border: none;
@@ -646,7 +646,7 @@ input[type=number] {
     }
 
     .submitbtn {
-        font-size: 1.2rem;
+        font-size: 1.7rem;
     }
 
     .welcometxt {
@@ -770,7 +770,7 @@ input[type=number] {
 
     .submitbtn {
         margin-top: 3vw;
-        font-size: 3.5vw;
+        font-size: 4.5vw;
     }
 
     .remove {
