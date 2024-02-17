@@ -80,6 +80,8 @@
 <!-- footer code ends -->
 
 {% block script %}
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/3.0.5/js.cookie.min.js" integrity="sha512-nlp9/l96/EpjYBx7EP7pGASVXNe80hGhYAUrjeXnu/fyF5Py0/RXav4BBNs7n5Hx1WFhOEOWSAVjGeC3oKxDVQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
    
     window.addEventListener('DOMContentLoaded', ()=>{
@@ -164,14 +166,19 @@
         }
         
         if(validation()){
+            let data = new FormData()
+            // Assuming you are using jQuery to get the CSRF token from a hidden input
+            data.append('csrfmiddlewaretoken', $('#csrf-helper input[name="csrfmiddlewaretoken"]').val());
+            let header = new Headers();
+            // add header from cookie
+            const csrftoken = Cookies.get('csrftoken');
+            header.append('X-CSRFToken', csrftoken);
             fetch("{% url 'send_otp' %}",{
                 method: "POST", 
                 body: JSON.stringify({
                     email: email.value
                 }),
-                headers: {
-                    "Content-type": "application/json; charset=UTF-8"
-                }
+                headers: header
             })
             const sendBtn = document.getElementById('otpSend');
             const proceed = document.querySelector('#submitOtp');
@@ -207,19 +214,33 @@
         for (var i = 0; i < otpValues.length; i++) {
             otp1 += otpValues[i].value;
         }
-        console.log(otp1);
+        let data = new FormData()
+        // Assuming you are using jQuery to get the CSRF token from a hidden input
+        data.append('csrfmiddlewaretoken', $('#csrf-helper input[name="csrfmiddlewaretoken"]').val());
+        let header = new Headers();
+        // add header from cookie
+        const csrftoken = Cookies.get('csrftoken');
+        header.append('X-CSRFToken', csrftoken);
         fetch("{% url 'verify_otp' %}",{
                 method: "POST", 
                 body: JSON.stringify({
                     otp: otp1
                 }),
-                headers: {
-                    "Content-type": "application/json; charset=UTF-8"
+                headers: header
+            })
+            .then(response => {return response.json(); console.log(response);})
+            .then(data => {
+                console.log(data);
+                if (data.success) {
+                    window.location.href = "{% url 'passes' %}";
+                } else if(data.failure){
+                    window.location.href = "{% url 'failure' %}";
                 }
             })
-        .catch((e)=>{console.log(e)})
+            .catch((e)=>{console.log(e)})
         {% for message in messages %}
             {% if message.tags == 'error' %}
+                console.log("hiiiiii");
                 const alert2 = document.querySelector('#alt_otpSend');
                 let msg = "{{message}}"
                 console.log(msg)

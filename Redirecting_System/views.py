@@ -75,7 +75,6 @@ def otp(request):
 def Success(request):
     return render(request, "Redirecting_System/success.html")
 
-@csrf_exempt
 def sendOtp(request):
     print(request.body, "sendOtp")
     try:
@@ -107,16 +106,13 @@ def success(request):
 def failure(request):
     return render(request, "Redirecting_System/failure.html", )
 
-@csrf_exempt
 def verify_otp(request):
     try:
-        print(request.body, "verify")
         # Get the list of OTP values from the POST data
         # otp_values = request.POST.getlist('otp')
         # Combine the OTP values into a single string
         # otp = ''.join(otp_values)
         otp = json.loads(request.body)['otp']
-        print(otp)
         otpID = request.session.get('OTPId')
         snapshots = db.collection('all_otps').where('id', '==', otpID).stream() #
         users = []
@@ -129,7 +125,6 @@ def verify_otp(request):
         email = request.session.get('LeaderEmail')
         print(OTP, otp1)
         if OTP == otp1:
-            print('hello')
             verifiedUsers = db.collection('verified_user').where('email', '==', email).stream()
             userPasses = []
             for user in verifiedUsers:
@@ -144,10 +139,17 @@ def verify_otp(request):
                     'email': email,
                 })
                 request.session['emailId'] = doc_ref.id
-                return redirect('passes')
+                if True:
+                    return JsonResponse({"success": True, "message": "OTP successfully verified"})
+                else:
+                    return redirect('passes') 
             else:
                 message="Card or User is not valid"
-                return render(request, "Redirecting_System/failure.html", {"message":message})
+                if True:
+                    return JsonResponse({"failure": True, "message": "Card or User is not valid"})
+                else:
+                    return render(request, "Redirecting_System/failure.html", {"message":message})
+                
         else:
             context = {
                 'message': "Incorrect OTP",
@@ -155,10 +157,6 @@ def verify_otp(request):
             }
             print('error')
             messages.error(request,  'Incorrect OTP')
-            # else:
-    #         return render(request, "Redirecting_System/failure.html", {"message":message})
-    #         message="Card or User is not valid"
-        # return render(request, 'Redirecting_System/otp.html', context)
         
     except Exception as e:
         print(e)
