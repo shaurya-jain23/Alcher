@@ -132,6 +132,7 @@ def verify_otp(request):
                 userid = request.session.get('pass_id')
                 if userid == user.id:
                     userPasses.append(user.id)
+            print(userPasses)        
             if len(userPasses) != 0:
                 doc_ref = db.collection('all_emails').document()
                 doc_ref.set({
@@ -139,12 +140,14 @@ def verify_otp(request):
                     'email': email,
                 })
                 request.session['emailId'] = doc_ref.id
+                print('success')
                 if True:
                     return JsonResponse({"success": True, "message": "OTP successfully verified"})
                 else:
                     return redirect('passes') 
             else:
                 message="Card or User is not valid"
+                print('failure')
                 if True:
                     return JsonResponse({"failure": True, "message": "Card or User is not valid"})
                 else:
@@ -155,12 +158,12 @@ def verify_otp(request):
                 'message': "Incorrect OTP",
                 'email': email
             }
+            # messages.error(request,  'Incorrect OTP')
             print('error')
-            messages.error(request,  'Incorrect OTP')
         
     except Exception as e:
         print(e)
-    return JsonResponse({"otp": otp})
+    return JsonResponse(context)
     # # Get the list of OTP values from the POST data
     # otp_values = request.POST.getlist('otp')
     # # Combine the OTP values into a single string

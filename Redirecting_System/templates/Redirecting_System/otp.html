@@ -236,23 +236,22 @@
                 } else if(data.failure){
                     window.location.href = "{% url 'failure' %}";
                 }
+                else if(data.message == "Incorrect OTP"){
+                    const alert2 = document.querySelector('#alt_otpSend');
+                    let msg = "Incorrect OTP"
+                    console.log(msg)
+                    if(!msg){
+                        alert2.style.display = 'none';
+                    }
+                    else{
+                        alert2.innerHTML = msg;
+                        codes[0].focus()
+                    }
+                }
             })
             .catch((e)=>{console.log(e)})
-        {% for message in messages %}
-            {% if message.tags == 'error' %}
-                console.log("hiiiiii");
-                const alert2 = document.querySelector('#alt_otpSend');
-                let msg = "{{message}}"
-                console.log(msg)
-                if(!msg){
-                    alert2.style.display = 'none';
-                }
-                else{
-                    alert2.innerHTML = msg;
-                    codes[0].focus()
-                }
-            {% endif %}
-        {% endfor %}
+            console.log("hiiiiii");
+           
 
         // Perform client-side validation
         // var otp1 = parseInt('{{ otp1 }}');  // Pass the correct OTP value from the server
